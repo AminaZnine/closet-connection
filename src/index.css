@@ -126,13 +126,12 @@
 @layer components {
   /* Standardized image aspect ratios */
   .aspect-portrait {
-    @apply aspect-[3/4];
+    aspect-ratio: 3/4;
   }
   
-  .aspect-square {
-    @apply aspect-square;
-  }
-
+  /* We removed the circular dependency by not using @apply for aspect-square */
+  /* Instead, we use the class directly from Tailwind */
+  
   /* Glass effect */
   .glass {
     @apply bg-background/70 backdrop-blur-lg border border-border/60;
