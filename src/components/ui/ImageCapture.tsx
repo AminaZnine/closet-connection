@@ -9,18 +9,15 @@ import { cn } from '@/lib/utils';
 
 interface ImageCaptureProps {
   onImageCapture: (file: File) => void;
-  onClose?: () => void;
   className?: string;
 }
 
 const ImageCapture: React.FC<ImageCaptureProps> = ({
   onImageCapture,
-  onClose,
   className,
 }) => {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -94,24 +91,10 @@ const ImageCapture: React.FC<ImageCaptureProps> = ({
     fileInputRef.current?.click();
   };
 
-  const handleCloseSheet = () => {
-    stopCamera();
-    setIsOpen(false);
-    if (onClose) {
-      onClose();
-    }
-  };
-
   return (
-    <Sheet 
-      open={isOpen}
-      onOpenChange={(open) => {
-        if (!open) {
-          stopCamera();
-          handleCloseSheet();
-        }
-      }}
-    >
+    <Sheet onOpenChange={(open) => {
+      if (!open) stopCamera();
+    }}>
       <SheetTrigger asChild>
         <Button variant="outline" className={cn("gap-2", className)}>
           <Upload size={16} />
@@ -182,7 +165,7 @@ const ImageCapture: React.FC<ImageCaptureProps> = ({
         
         <SheetFooter>
           <SheetClose asChild>
-            <Button type="button" disabled={!capturedImage} onClick={handleCloseSheet}>
+            <Button type="button" disabled={!capturedImage}>
               Add to Wardrobe
             </Button>
           </SheetClose>
