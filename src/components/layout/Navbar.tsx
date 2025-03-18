@@ -1,27 +1,12 @@
 
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Heart, LogIn, LogOut, Search, User, UserPlus } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Heart, Search, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { toast } from '@/hooks/use-toast';
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
-  
   const isActive = (path: string) => location.pathname === path;
-
-  const handleLogout = () => {
-    logout();
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out.",
-    });
-    navigate('/');
-  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass border-b">
@@ -80,62 +65,26 @@ export const Navbar: React.FC = () => {
             >
               <Search size={20} />
             </button>
-            
-            {isAuthenticated ? (
-              <>
-                <Link
-                  to="/wishlist"
-                  aria-label="Wishlist"
-                  className={cn(
-                    "btn-hover",
-                    isActive("/wishlist") ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <Heart size={20} />
-                </Link>
-                <Link
-                  to="/profile"
-                  aria-label="Profile"
-                  className={cn(
-                    "btn-hover",
-                    isActive("/profile") ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <User size={20} />
-                </Link>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={handleLogout} 
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <LogOut size={20} />
-                </Button>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  aria-label="Login"
-                  className={cn(
-                    "btn-hover",
-                    isActive("/login") ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <LogIn size={20} />
-                </Link>
-                <Link
-                  to="/signup"
-                  aria-label="Sign up"
-                  className={cn(
-                    "btn-hover",
-                    isActive("/signup") ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <UserPlus size={20} />
-                </Link>
-              </>
-            )}
+            <Link
+              to="/wishlist"
+              aria-label="Wishlist"
+              className={cn(
+                "btn-hover",
+                isActive("/wishlist") ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Heart size={20} />
+            </Link>
+            <Link
+              to="/profile"
+              aria-label="Profile"
+              className={cn(
+                "btn-hover",
+                isActive("/profile") ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <User size={20} />
+            </Link>
           </div>
         </div>
       </div>
