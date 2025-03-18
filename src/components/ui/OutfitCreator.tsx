@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
+import ImageCapture from './ImageCapture';
 
 interface ClothingItem {
   id: string;
@@ -12,13 +13,16 @@ interface ClothingItem {
 interface OutfitCreatorProps {
   wardrobeItems: ClothingItem[];
   className?: string;
+  onAddItem?: (item: ClothingItem) => void;
 }
 
 const OutfitCreator: React.FC<OutfitCreatorProps> = ({
   wardrobeItems,
   className,
+  onAddItem,
 }) => {
   const [selectedItems, setSelectedItems] = useState<ClothingItem[]>([]);
+  const [showImageCapture, setShowImageCapture] = useState(false);
   
   const categories = ['Tops', 'Bottoms', 'Shoes', 'Accessories'];
   
@@ -34,6 +38,24 @@ const OutfitCreator: React.FC<OutfitCreatorProps> = ({
   
   const isItemSelected = (id: string) => {
     return selectedItems.some(item => item.id === id);
+  };
+
+  const handleImageCapture = (file: File) => {
+    // Create a new wardrobe item with the captured image
+    const newItem = {
+      id: `user-${Date.now()}`,
+      imageUrl: URL.createObjectURL(file),
+      category: 'Uncategorized', // Default category
+      name: 'New Item' // Default name
+    };
+    
+    // Call the onAddItem callback if provided
+    if (onAddItem) {
+      onAddItem(newItem);
+    }
+
+    // Close the image capture dialog
+    setShowImageCapture(false);
   };
   
   return (
@@ -117,6 +139,26 @@ const OutfitCreator: React.FC<OutfitCreatorProps> = ({
             </div>
           );
         })}
+        
+        {/* Add new item button with ImageCapture */}
+        <div className="mt-6">
+          {showImageCapture ? (
+            <ImageCapture 
+              onImageCapture={handleImageCapture} 
+              onClose={() => setShowImageCapture(false)}
+            />
+          ) : (
+            <div 
+              className="border border-dashed border-border aspect-square w-20 h-20 rounded-md flex flex-col items-center justify-center p-2 cursor-pointer hover:bg-muted/50 transition-colors duration-300"
+              onClick={() => setShowImageCapture(true)}
+            >
+              <div className="w-6 h-6 rounded-full flex items-center justify-center border border-muted-foreground mb-1">
+                <span className="text-sm leading-none">+</span>
+              </div>
+              <p className="text-xs text-center text-muted-foreground">Add new item</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

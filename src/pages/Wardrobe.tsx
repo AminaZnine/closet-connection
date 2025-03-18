@@ -1,10 +1,8 @@
-import React, { useState, useRef } from 'react';
+
+import React, { useState } from 'react';
 import WardrobeGrid from '@/components/ui/WardrobeGrid';
 import { cn } from '@/lib/utils';
 import ImageCapture from '@/components/ui/ImageCapture';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
 
 // Sample data - in a real app, this would come from an API
 const SAMPLE_WARDROBE_ITEMS = [
@@ -70,7 +68,6 @@ const SAMPLE_OUTFITS = [
 const Wardrobe: React.FC = () => {
   const [activeTab, setActiveTab] = useState('items');
   const [userItems, setUserItems] = useState<any[]>(SAMPLE_WARDROBE_ITEMS);
-  const [showImageCapture, setShowImageCapture] = useState(false);
   
   const handleItemClick = (item: any) => {
     console.log('Item clicked:', item);
@@ -90,10 +87,6 @@ const Wardrobe: React.FC = () => {
     
     // Add to user items
     setUserItems(prev => [newItem, ...prev]);
-  };
-
-  const handleAddItemClick = () => {
-    setShowImageCapture(true);
   };
   
   return (
@@ -146,7 +139,6 @@ const Wardrobe: React.FC = () => {
         <WardrobeGrid 
           items={userItems}
           onItemClick={handleItemClick}
-          onAddItemClick={handleImageCapture}
         />
       )}
       
