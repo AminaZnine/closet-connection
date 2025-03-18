@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { Plus } from 'lucide-react';
 
 interface ClothingItem {
   id: string;
@@ -14,6 +15,7 @@ interface WardrobeGridProps {
   title?: string;
   className?: string;
   onItemClick?: (item: ClothingItem) => void;
+  onAddItemClick?: (file: File) => void;
 }
 
 const WardrobeGrid: React.FC<WardrobeGridProps> = ({
@@ -21,6 +23,7 @@ const WardrobeGrid: React.FC<WardrobeGridProps> = ({
   title,
   className,
   onItemClick,
+  onAddItemClick,
 }) => {
   return (
     <div className={cn("space-y-4", className)}>
@@ -48,9 +51,13 @@ const WardrobeGrid: React.FC<WardrobeGridProps> = ({
           </div>
         ))}
         
-        <div className="border border-dashed border-border aspect-square rounded-md flex flex-col items-center justify-center p-4 cursor-pointer hover:bg-muted/50 transition-colors duration-300">
+        {/* Add new item button */}
+        <div 
+          className="border border-dashed border-border aspect-square rounded-md flex flex-col items-center justify-center p-4 cursor-pointer hover:bg-muted/50 transition-colors duration-300"
+          onClick={() => onAddItemClick && onAddItemClick(new File([], ''))}
+        >
           <div className="w-8 h-8 rounded-full flex items-center justify-center border border-muted-foreground mb-2">
-            <span className="text-xl leading-none">+</span>
+            <Plus className="w-4 h-4" />
           </div>
           <p className="text-xs text-center text-muted-foreground">Add new item</p>
         </div>
