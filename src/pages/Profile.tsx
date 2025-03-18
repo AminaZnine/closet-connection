@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import ProfileHeader from '@/components/ui/ProfileHeader';
@@ -6,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Camera, Settings, BookMarked, Heart, ShoppingBag, LogOut, Upload, UserPen, ImagePlus, LogIn } from 'lucide-react';
+import { Camera, Settings, BookMarked, Heart, ShoppingBag, LogOut, Upload, UserPen, ImagePlus, LogIn, User } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -355,7 +356,12 @@ const Profile: React.FC = () => {
 };
 
 interface ProfileEditModalProps {
-  user: typeof SAMPLE_USER;
+  user: {
+    username: string;
+    bio?: string;
+    email: string;
+    avatarUrl: string;
+  };
   onClose: () => void;
   onSave: (formData: ProfileFormValues) => void;
 }
