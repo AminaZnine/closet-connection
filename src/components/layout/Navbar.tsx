@@ -16,7 +16,7 @@ export const Navbar: React.FC = () => {
             to="/"
             className="text-2xl font-semibold tracking-tighter"
           >
-            closet
+            Unik concept
           </Link>
           
           <nav className="hidden md:flex items-center space-x-8">
