@@ -22,6 +22,17 @@ import { Card } from '@/components/ui/card';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+// Define the profile form schema
+const profileFormSchema = z.object({
+  username: z.string().min(3, { message: "Username must be at least 3 characters" }),
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  bio: z.string().optional(),
+  avatarUrl: z.string().url({ message: "Please enter a valid URL" }).optional(),
+});
+
+// Define the ProfileFormValues type
+type ProfileFormValues = z.infer<typeof profileFormSchema>;
+
 // Sample data - in a real app, this would come from an API
 const SAMPLE_USER = {
   username: 'sophie_style',
@@ -62,7 +73,7 @@ const SAMPLE_USER_POSTS = [
 const SAMPLE_SAVED_POSTS = [
   {
     id: 'sp1',
-    imageUrl: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1509631179647-0177331693e8?auto=format&fit=crop&q=80',
     likes: 112,
     username: 'minimal_fashion',
     caption: 'Timeless outfit inspiration'
