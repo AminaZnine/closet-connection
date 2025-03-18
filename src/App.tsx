@@ -10,6 +10,7 @@ import Wardrobe from "./pages/Wardrobe";
 import Wishlist from "./pages/Wishlist";
 import Profile from "./pages/Profile";
 import Create from "./pages/Create";
+import Shop from "./pages/Shop";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -58,6 +59,14 @@ const App = () => (
             element={
               <AnimatedLayout>
                 <Create />
+              </AnimatedLayout>
+            } 
+          />
+          <Route 
+            path="/shop" 
+            element={
+              <AnimatedLayout>
+                <Shop />
               </AnimatedLayout>
             } 
           />

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Heart, Home, Search, ShoppingBag, User } from 'lucide-react';
+import { Heart, Home, Search, ShoppingBag, Store, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export const BottomNav: React.FC = () => {
@@ -32,14 +32,14 @@ export const BottomNav: React.FC = () => {
           <span className="text-[10px] mt-1">Wardrobe</span>
         </Link>
         <Link
-          to="/search"
+          to="/shop"
           className={cn(
             "flex flex-col items-center justify-center",
-            isActive("/search") ? "text-foreground" : "text-muted-foreground"
+            isActive("/shop") ? "text-foreground" : "text-muted-foreground"
           )}
         >
-          <Search size={20} />
-          <span className="text-[10px] mt-1">Search</span>
+          <Store size={20} />
+          <span className="text-[10px] mt-1">Shop</span>
         </Link>
         <Link
           to="/wishlist"

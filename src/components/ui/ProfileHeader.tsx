@@ -9,6 +9,7 @@ interface ProfileHeaderProps {
   following?: number;
   bio?: string;
   className?: string;
+  onEditClick?: () => void;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -18,6 +19,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   following = 0,
   bio,
   className,
+  onEditClick,
 }) => {
   return (
     <div className={cn("flex flex-col items-center text-center", className)}>
@@ -27,9 +29,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           alt={username} 
           className="w-24 h-24 rounded-full object-cover border border-border"
         />
-        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-primary text-primary-foreground rounded-full text-xs font-medium">
+        <button 
+          className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-primary text-primary-foreground rounded-full text-xs font-medium cursor-pointer"
+          onClick={onEditClick}
+        >
           Edit
-        </div>
+        </button>
       </div>
       
       <h2 className="text-xl font-semibold mb-2">{username}</h2>
@@ -47,7 +52,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         </div>
       </div>
       
-      <button className="w-full max-w-xs py-2 border border-foreground rounded-md font-medium text-sm btn-hover">
+      <button 
+        className="w-full max-w-xs py-2 border border-foreground rounded-md font-medium text-sm btn-hover"
+        onClick={onEditClick}
+      >
         Edit Profile
       </button>
     </div>

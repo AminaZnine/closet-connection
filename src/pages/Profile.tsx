@@ -1,7 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import { toast } from '@/components/ui/use-toast';
 import ProfileHeader from '@/components/ui/ProfileHeader';
 import StyleCard from '@/components/ui/StyleCard';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 // Sample data - in a real app, this would come from an API
 const SAMPLE_USER = {
@@ -40,8 +44,53 @@ const SAMPLE_USER_POSTS = [
 ];
 
 const Profile: React.FC = () => {
+  const navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false);
+  
   const handlePostClick = (postId: string) => {
     console.log(`Post clicked: ${postId}`);
+    toast({
+      title: "Post details",
+      description: `You selected post ${postId}`,
+    });
+  };
+  
+  const handleEditProfile = () => {
+    setIsEditing(true);
+    toast({
+      title: "Edit Profile",
+      description: "Profile editing mode activated",
+    });
+  };
+  
+  const handleStylePreferences = () => {
+    toast({
+      title: "Style Preferences",
+      description: "Opening style preferences...",
+    });
+  };
+  
+  const handleNotificationSettings = () => {
+    toast({
+      title: "Notifications",
+      description: "Opening notification settings...",
+    });
+  };
+  
+  const handleSignOut = () => {
+    toast({
+      title: "Signing out",
+      description: "You have been signed out",
+    });
+    // In a real app, this would handle the sign out process
+    setTimeout(() => navigate('/'), 1500);
+  };
+  
+  const handleManagePosts = () => {
+    toast({
+      title: "Manage Posts",
+      description: "Opening post management...",
+    });
   };
   
   return (
@@ -52,12 +101,16 @@ const Profile: React.FC = () => {
         followers={SAMPLE_USER.followers}
         following={SAMPLE_USER.following}
         bio={SAMPLE_USER.bio}
+        onEditClick={handleEditProfile}
       />
       
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-medium">Your Style Posts</h2>
-          <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <button 
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            onClick={handleManagePosts}
+          >
             Manage Posts
           </button>
         </div>
@@ -79,20 +132,77 @@ const Profile: React.FC = () => {
         <h2 className="text-xl font-medium text-center">Manage Your Account</h2>
         
         <div className="space-y-3 max-w-sm mx-auto">
-          <button className="w-full py-2 text-sm border border-foreground rounded-md btn-hover">
+          <button 
+            className="w-full py-2 text-sm border border-foreground rounded-md btn-hover"
+            onClick={handleEditProfile}
+          >
             Edit Profile
           </button>
-          <button className="w-full py-2 text-sm border border-foreground rounded-md btn-hover">
+          <button 
+            className="w-full py-2 text-sm border border-foreground rounded-md btn-hover"
+            onClick={handleStylePreferences}
+          >
             Style Preferences
           </button>
-          <button className="w-full py-2 text-sm border border-foreground rounded-md btn-hover">
+          <button 
+            className="w-full py-2 text-sm border border-foreground rounded-md btn-hover"
+            onClick={handleNotificationSettings}
+          >
             Notification Settings
           </button>
-          <button className="w-full py-2 text-sm border border-border text-muted-foreground rounded-md btn-hover">
+          <button 
+            className="w-full py-2 text-sm border border-border text-muted-foreground rounded-md btn-hover"
+            onClick={handleSignOut}
+          >
             Sign Out
           </button>
         </div>
       </div>
+      
+      {isEditing && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-card w-full max-w-md rounded-lg border shadow-lg p-6">
+            <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
+            
+            <div className="flex justify-center mb-6">
+              <Avatar className="h-24 w-24">
+                <AvatarImage src={SAMPLE_USER.avatarUrl} alt={SAMPLE_USER.username} />
+                <AvatarFallback>{SAMPLE_USER.username.substring(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Username</label>
+                <input 
+                  type="text" 
+                  className="w-full px-3 py-2 border rounded-md"
+                  defaultValue={SAMPLE_USER.username}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Bio</label>
+                <textarea 
+                  className="w-full px-3 py-2 border rounded-md min-h-[100px]"
+                  defaultValue={SAMPLE_USER.bio}
+                />
+              </div>
+            </div>
+            
+            <div className="flex justify-end space-x-3 mt-6">
+              <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+              <Button onClick={() => {
+                setIsEditing(false);
+                toast({
+                  title: "Profile updated",
+                  description: "Your profile has been successfully updated",
+                });
+              }}>Save Changes</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
