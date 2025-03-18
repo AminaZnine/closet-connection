@@ -66,21 +66,13 @@ const Create: React.FC = () => {
     // Add to user items
     setWardrobeItems(prev => [newItem, ...prev]);
   };
-
-  const handleAddItem = (item: any) => {
-    // Add to user items
-    setWardrobeItems(prev => [item, ...prev]);
-  };
   
   return (
     <div className="pb-8">
       <div className="flex justify-end mb-4">
         <ImageCapture onImageCapture={handleImageCapture} />
       </div>
-      <OutfitCreator 
-        wardrobeItems={wardrobeItems} 
-        onAddItem={handleAddItem}
-      />
+      <OutfitCreator wardrobeItems={wardrobeItems} />
     </div>
   );
 };
