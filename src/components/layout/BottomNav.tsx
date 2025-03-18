@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Heart, Home, LogIn, LogOut, Search, ShoppingBag, Store, User, UserPlus } from 'lucide-react';
+import { Heart, Home, LogOut, Store, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
@@ -36,6 +36,17 @@ export const BottomNav: React.FC = () => {
           <span className="text-[10px] mt-1">Home</span>
         </Link>
         
+        <Link
+          to="/shop"
+          className={cn(
+            "flex flex-col items-center justify-center",
+            isActive("/shop") ? "text-foreground" : "text-muted-foreground"
+          )}
+        >
+          <Store size={20} />
+          <span className="text-[10px] mt-1">Shop</span>
+        </Link>
+        
         {isAuthenticated ? (
           <>
             <Link
@@ -45,28 +56,8 @@ export const BottomNav: React.FC = () => {
                 isActive("/wardrobe") ? "text-foreground" : "text-muted-foreground"
               )}
             >
-              <ShoppingBag size={20} />
-              <span className="text-[10px] mt-1">Wardrobe</span>
-            </Link>
-            <Link
-              to="/shop"
-              className={cn(
-                "flex flex-col items-center justify-center",
-                isActive("/shop") ? "text-foreground" : "text-muted-foreground"
-              )}
-            >
-              <Store size={20} />
-              <span className="text-[10px] mt-1">Shop</span>
-            </Link>
-            <Link
-              to="/wishlist"
-              className={cn(
-                "flex flex-col items-center justify-center",
-                isActive("/wishlist") ? "text-foreground" : "text-muted-foreground"
-              )}
-            >
               <Heart size={20} />
-              <span className="text-[10px] mt-1">Wishlist</span>
+              <span className="text-[10px] mt-1">Wardrobe</span>
             </Link>
             <Link
               to="/profile"
@@ -80,38 +71,16 @@ export const BottomNav: React.FC = () => {
             </Link>
           </>
         ) : (
-          <>
-            <Link
-              to="/shop"
-              className={cn(
-                "flex flex-col items-center justify-center",
-                isActive("/shop") ? "text-foreground" : "text-muted-foreground"
-              )}
-            >
-              <Store size={20} />
-              <span className="text-[10px] mt-1">Shop</span>
-            </Link>
-            <Link
-              to="/login"
-              className={cn(
-                "flex flex-col items-center justify-center",
-                isActive("/login") ? "text-foreground" : "text-muted-foreground"
-              )}
-            >
-              <LogIn size={20} />
-              <span className="text-[10px] mt-1">Login</span>
-            </Link>
-            <Link
-              to="/signup"
-              className={cn(
-                "flex flex-col items-center justify-center",
-                isActive("/signup") ? "text-foreground" : "text-muted-foreground"
-              )}
-            >
-              <UserPlus size={20} />
-              <span className="text-[10px] mt-1">Sign Up</span>
-            </Link>
-          </>
+          <Link
+            to="/login"
+            className={cn(
+              "flex flex-col items-center justify-center",
+              isActive("/login") ? "text-foreground" : "text-muted-foreground"
+            )}
+          >
+            <User size={20} />
+            <span className="text-[10px] mt-1">Profile</span>
+          </Link>
         )}
       </div>
     </div>

@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -38,7 +39,9 @@ const App = () => (
               path="/wardrobe" 
               element={
                 <AnimatedLayout>
-                  <Wardrobe />
+                  <ProtectedRoute>
+                    <Wardrobe />
+                  </ProtectedRoute>
                 </AnimatedLayout>
               } 
             />
@@ -46,7 +49,9 @@ const App = () => (
               path="/wishlist" 
               element={
                 <AnimatedLayout>
-                  <Wishlist />
+                  <ProtectedRoute>
+                    <Wishlist />
+                  </ProtectedRoute>
                 </AnimatedLayout>
               } 
             />
@@ -54,7 +59,9 @@ const App = () => (
               path="/profile" 
               element={
                 <AnimatedLayout>
-                  <Profile />
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
                 </AnimatedLayout>
               } 
             />
@@ -62,7 +69,9 @@ const App = () => (
               path="/create" 
               element={
                 <AnimatedLayout>
-                  <Create />
+                  <ProtectedRoute>
+                    <Create />
+                  </ProtectedRoute>
                 </AnimatedLayout>
               } 
             />
