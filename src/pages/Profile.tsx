@@ -22,7 +22,6 @@ import { Card } from '@/components/ui/card';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-// Define the profile form schema
 const profileFormSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -30,10 +29,8 @@ const profileFormSchema = z.object({
   avatarUrl: z.string().url({ message: "Please enter a valid URL" }).optional(),
 });
 
-// Define the ProfileFormValues type
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-// Sample data - in a real app, this would come from an API
 const SAMPLE_USER = {
   username: 'sophie_style',
   avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80',
@@ -112,32 +109,18 @@ const Profile: React.FC = () => {
   
   const handlePostClick = (postId: string) => {
     console.log(`Post clicked: ${postId}`);
-    toast({
-      title: "Post details",
-      description: `You selected post ${postId}`,
-    });
   };
   
   const handleEditProfile = () => {
     setIsEditing(true);
-    toast({
-      title: "Edit Profile",
-      description: "Profile editing mode activated",
-    });
   };
   
   const handleStylePreferences = () => {
-    toast({
-      title: "Style Preferences",
-      description: "Opening style preferences...",
-    });
+    console.log("Opening style preferences");
   };
   
   const handleNotificationSettings = () => {
-    toast({
-      title: "Notifications",
-      description: "Opening notification settings...",
-    });
+    console.log("Opening notification settings");
   };
   
   const handleSignOut = () => {
@@ -145,15 +128,11 @@ const Profile: React.FC = () => {
       title: "Signing out",
       description: "You have been signed out",
     });
-    // In a real app, this would handle the sign out process
     setTimeout(() => navigate('/'), 1500);
   };
   
   const handleManagePosts = () => {
-    toast({
-      title: "Manage Posts",
-      description: "Opening post management...",
-    });
+    console.log("Opening post management");
   };
 
   const handleSaveProfile = (data: ProfileFormValues) => {
@@ -380,11 +359,6 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({ user, onClose, onSa
     const randomAvatar = mockAvatars[Math.floor(Math.random() * mockAvatars.length)];
     setAvatarPreview(randomAvatar);
     form.setValue('avatarUrl', randomAvatar);
-    
-    toast({
-      title: "Avatar Updated",
-      description: "Profile picture has been changed successfully"
-    });
   };
   
   const onSubmit = (data: ProfileFormValues) => {
