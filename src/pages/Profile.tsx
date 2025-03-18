@@ -18,9 +18,10 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form';
-import { Card } from '@/components/ui/card';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const profileFormSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters" }),
@@ -319,11 +320,18 @@ const Profile: React.FC = () => {
       </div>
       
       {isEditing && (
-        <ProfileEditModal 
-          user={userData} 
-          onClose={() => setIsEditing(false)} 
-          onSave={handleSaveProfile} 
-        />
+        <Dialog open={isEditing} onOpenChange={setIsEditing}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-semibold">Edit Profile</DialogTitle>
+            </DialogHeader>
+            <ProfileEditModal 
+              user={userData} 
+              onClose={() => setIsEditing(false)} 
+              onSave={handleSaveProfile} 
+            />
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
@@ -389,105 +397,96 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({ user, onClose, onSa
   };
   
   return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md rounded-lg border shadow-lg p-6 animate-fade-in">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">Edit Profile</h2>
-          <Button variant="ghost" size="sm" onClick={onClose}>✕</Button>
-        </div>
-        
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="flex justify-center mb-6 relative">
-              <div className="relative group">
-                <Avatar className="h-28 w-28 border-2 border-primary">
-                  <AvatarImage src={avatarPreview} alt={form.getValues().username} className="object-cover" />
-                  <AvatarFallback>{form.getValues().username.substring(0, 2).toUpperCase()}</AvatarFallback>
-                </Avatar>
-                <div 
-                  className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                  onClick={triggerFileInput}
-                >
-                  <ImagePlus className="text-white h-8 w-8" />
-                </div>
-              </div>
-              <input 
-                type="file"
-                ref={fileInputRef}
-                className="hidden"
-                accept="image/*"
-                onChange={handleAvatarUpload}
-              />
-            </div>
-            <div className="text-center -mt-4 mb-4">
-              <Button 
-                type="button"
-                variant="outline"
-                size="sm"
-                className="text-xs"
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div className="flex justify-center mb-5">
+          <div className="relative group">
+            <Avatar className="h-32 w-32 border-2 border-primary cursor-pointer">
+              <AvatarImage src={avatarPreview} alt={form.getValues().username} className="object-cover" />
+              <AvatarFallback>{form.getValues().username.substring(0, 2).toUpperCase()}</AvatarFallback>
+              <div 
+                className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={triggerFileInput}
               >
-                <Upload size={12} className="mr-1" />
-                Upload Photo
-              </Button>
-            </div>
-            
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Your username" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Your email" type="email" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="bio"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Bio</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        {...field} 
-                        placeholder="Tell us about yourself"
-                        className="resize-none min-h-[100px]"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <div className="flex justify-end space-x-3 pt-4">
-              <Button variant="outline" onClick={onClose} type="button">Cancel</Button>
-              <Button type="submit">Save Changes</Button>
-            </div>
-          </form>
-        </Form>
-      </Card>
-    </div>
+                <ImagePlus className="text-white h-10 w-10" />
+              </div>
+            </Avatar>
+            <input 
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/*"
+              onChange={handleAvatarUpload}
+            />
+          </div>
+        </div>
+        <div className="text-center -mt-4 mb-6">
+          <Button 
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={triggerFileInput}
+            className="rounded-full px-4"
+          >
+            <Upload size={14} className="mr-2" />
+            Upload Photo
+          </Button>
+        </div>
+        
+        <div className="space-y-4">
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Your username" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Your email" type="email" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="bio"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Bio</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    {...field} 
+                    placeholder="Tell us about yourself"
+                    className="resize-none min-h-[100px]"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        
+        <div className="flex justify-end space-x-3 pt-4 mt-6">
+          <Button variant="outline" onClick={onClose} type="button">Cancel</Button>
+          <Button type="submit">Save Changes</Button>
+        </div>
+      </form>
+    </Form>
   );
 };
 
