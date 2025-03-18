@@ -1,11 +1,15 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Heart, Search, User } from 'lucide-react';
+import { Heart, Search, User, LogIn } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
+  const { user, isAuthenticated } = useAuth();
   const isActive = (path: string) => location.pathname === path;
 
   return (
@@ -75,16 +79,36 @@ export const Navbar: React.FC = () => {
             >
               <Heart size={20} />
             </Link>
-            <Link
-              to="/profile"
-              aria-label="Profile"
-              className={cn(
-                "btn-hover",
-                isActive("/profile") ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <User size={20} />
-            </Link>
+            
+            {isAuthenticated ? (
+              <Link
+                to="/profile"
+                aria-label="Profile"
+                className={cn(
+                  "btn-hover",
+                  isActive("/profile") ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user?.avatarUrl} alt={user?.username} />
+                  <AvatarFallback>{user?.username.substring(0, 2).toUpperCase()}</AvatarFallback>
+                </Avatar>
+              </Link>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Link to="/login">
+                  <Button variant="ghost" size="sm" className="hidden sm:flex">
+                    Log in
+                  </Button>
+                  <Button variant="ghost" size="icon" className="sm:hidden">
+                    <LogIn size={20} />
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button size="sm" className="hidden sm:flex">Sign up</Button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

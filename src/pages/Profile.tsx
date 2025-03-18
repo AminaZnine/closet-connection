@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Camera, Settings, BookMarked, Heart, ShoppingBag, LogOut, Upload, UserPen, ImagePlus } from 'lucide-react';
+import { Camera, Settings, BookMarked, Heart, ShoppingBag, LogOut, Upload, UserPen, ImagePlus, LogIn } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -18,10 +18,10 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useAuth } from '@/contexts/AuthContext';
 
 const profileFormSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters" }),
@@ -106,7 +106,35 @@ const Profile: React.FC = () => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('posts');
-  const [userData, setUserData] = useState(SAMPLE_USER);
+  const { user, isAuthenticated, logout } = useAuth();
+  
+  if (!isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+        <div className="mb-8">
+          <Avatar className="h-24 w-24 mx-auto mb-6">
+            <AvatarFallback>
+              <User size={48} />
+            </AvatarFallback>
+          </Avatar>
+          <h1 className="text-2xl font-bold mb-2">Sign in to your account</h1>
+          <p className="text-muted-foreground max-w-sm mx-auto">
+            Log in to access your profile, save your favorite styles, and track your wardrobe
+          </p>
+        </div>
+        
+        <div className="flex flex-col w-full max-w-xs gap-3">
+          <Button onClick={() => navigate('/login')} className="w-full">
+            <LogIn className="mr-2 h-4 w-4" />
+            Log in
+          </Button>
+          <Button variant="outline" onClick={() => navigate('/signup')} className="w-full">
+            Sign up
+          </Button>
+        </div>
+      </div>
+    );
+  }
   
   const handlePostClick = (postId: string) => {
     console.log(`Post clicked: ${postId}`);
@@ -125,11 +153,7 @@ const Profile: React.FC = () => {
   };
   
   const handleSignOut = () => {
-    toast({
-      title: "Signing out",
-      description: "You have been signed out",
-    });
-    setTimeout(() => navigate('/'), 1500);
+    logout();
   };
   
   const handleManagePosts = () => {
@@ -137,18 +161,11 @@ const Profile: React.FC = () => {
   };
 
   const handleSaveProfile = (data: ProfileFormValues) => {
-    setUserData({
-      ...userData,
-      username: data.username,
-      bio: data.bio || '',
-      email: data.email,
-      avatarUrl: data.avatarUrl || userData.avatarUrl
-    });
-    setIsEditing(false);
     toast({
       title: "Profile updated",
       description: "Your profile has been successfully updated",
     });
+    setIsEditing(false);
   };
 
   const handleTabChange = (value: string) => {
@@ -158,11 +175,11 @@ const Profile: React.FC = () => {
   return (
     <div className="space-y-10 pb-8">
       <ProfileHeader 
-        avatarUrl={userData.avatarUrl}
-        username={userData.username}
-        followers={userData.followers}
-        following={userData.following}
-        bio={userData.bio}
+        avatarUrl={user?.avatarUrl || ''}
+        username={user?.username || ''}
+        followers={254}
+        following={187}
+        bio={user?.bio || ''}
         onEditClick={handleEditProfile}
       />
       
@@ -326,7 +343,7 @@ const Profile: React.FC = () => {
               <DialogTitle className="text-xl font-semibold">Edit Profile</DialogTitle>
             </DialogHeader>
             <ProfileEditModal 
-              user={userData} 
+              user={user} 
               onClose={() => setIsEditing(false)} 
               onSave={handleSaveProfile} 
             />
@@ -360,7 +377,6 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({ user, onClose, onSa
   const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Check file type
       if (!file.type.match('image.*')) {
         toast({
           title: "Invalid file type",
@@ -369,7 +385,6 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({ user, onClose, onSa
         return;
       }
       
-      // Check file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         toast({
           title: "File too large",

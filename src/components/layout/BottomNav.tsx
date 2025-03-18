@@ -3,9 +3,11 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Heart, Home, Search, ShoppingBag, Store, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const BottomNav: React.FC = () => {
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
   const isActive = (path: string) => location.pathname === path;
 
   return (
@@ -52,14 +54,14 @@ export const BottomNav: React.FC = () => {
           <span className="text-[10px] mt-1">Wishlist</span>
         </Link>
         <Link
-          to="/profile"
+          to={isAuthenticated ? "/profile" : "/login"}
           className={cn(
             "flex flex-col items-center justify-center",
-            isActive("/profile") ? "text-foreground" : "text-muted-foreground"
+            isActive("/profile") || isActive("/login") ? "text-foreground" : "text-muted-foreground"
           )}
         >
           <User size={20} />
-          <span className="text-[10px] mt-1">Profile</span>
+          <span className="text-[10px] mt-1">{isAuthenticated ? "Profile" : "Account"}</span>
         </Link>
       </div>
     </div>
