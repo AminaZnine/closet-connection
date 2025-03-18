@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { UserPen } from 'lucide-react';
 
 interface ProfileHeaderProps {
   avatarUrl: string;
@@ -30,9 +31,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           className="w-24 h-24 rounded-full object-cover border border-border"
         />
         <button 
-          className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-primary text-primary-foreground rounded-full text-xs font-medium cursor-pointer"
+          className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-primary text-primary-foreground rounded-full text-xs font-medium cursor-pointer flex items-center gap-1"
           onClick={onEditClick}
         >
+          <UserPen size={12} />
           Edit
         </button>
       </div>
@@ -53,9 +55,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       </div>
       
       <button 
-        className="w-full max-w-xs py-2 border border-foreground rounded-md font-medium text-sm btn-hover"
+        className="w-full max-w-xs py-2 border border-foreground rounded-md font-medium text-sm btn-hover flex items-center justify-center gap-2"
         onClick={onEditClick}
       >
+        <UserPen size={16} />
         Edit Profile
       </button>
     </div>

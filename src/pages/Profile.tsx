@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import ProfileHeader from '@/components/ui/ProfileHeader';
@@ -7,7 +6,21 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Camera, Settings, BookMarked, Heart, ShoppingBag, LogOut } from 'lucide-react';
+import { Camera, Settings, BookMarked, Heart, ShoppingBag, LogOut, Upload, UserPen } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { 
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+import { Card } from '@/components/ui/card';
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 // Sample data - in a real app, this would come from an API
 const SAMPLE_USER = {
@@ -15,7 +28,8 @@ const SAMPLE_USER = {
   avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80',
   followers: 254,
   following: 187,
-  bio: 'Fashion enthusiast | Minimalist style | Based in NYC'
+  bio: 'Fashion enthusiast | Minimalist style | Based in NYC',
+  email: 'sophie@example.com'
 };
 
 const SAMPLE_USER_POSTS = [
@@ -131,11 +145,13 @@ const Profile: React.FC = () => {
     });
   };
 
-  const handleSaveProfile = (formData: any) => {
+  const handleSaveProfile = (data: ProfileFormValues) => {
     setUserData({
       ...userData,
-      username: formData.username,
-      bio: formData.bio
+      username: data.username,
+      bio: data.bio || '',
+      email: data.email,
+      avatarUrl: data.avatarUrl || userData.avatarUrl
     });
     setIsEditing(false);
     toast({
@@ -285,7 +301,7 @@ const Profile: React.FC = () => {
             className="w-full py-2 text-sm flex items-center justify-center space-x-2 border border-foreground rounded-md btn-hover"
             onClick={handleEditProfile}
           >
-            <Settings size={16} />
+            <UserPen size={16} />
             <span>Edit Profile</span>
           </button>
           <button 
@@ -326,74 +342,126 @@ const Profile: React.FC = () => {
 interface ProfileEditModalProps {
   user: typeof SAMPLE_USER;
   onClose: () => void;
-  onSave: (formData: any) => void;
+  onSave: (formData: ProfileFormValues) => void;
 }
 
 const ProfileEditModal: React.FC<ProfileEditModalProps> = ({ user, onClose, onSave }) => {
-  const [username, setUsername] = useState(user.username);
-  const [bio, setBio] = useState(user.bio);
-  const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl);
+  const form = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      username: user.username,
+      bio: user.bio,
+      email: user.email,
+      avatarUrl: user.avatarUrl
+    }
+  });
   
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave({ username, bio, avatarUrl });
+  const [avatarPreview, setAvatarPreview] = useState(user.avatarUrl);
+  
+  const handleAvatarChange = () => {
+    const mockAvatars = [
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80'
+    ];
+    
+    const randomAvatar = mockAvatars[Math.floor(Math.random() * mockAvatars.length)];
+    setAvatarPreview(randomAvatar);
+    form.setValue('avatarUrl', randomAvatar);
+    
+    toast({
+      title: "Avatar Updated",
+      description: "Profile picture has been changed successfully"
+    });
+  };
+  
+  const onSubmit = (data: ProfileFormValues) => {
+    onSave(data);
   };
   
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-card w-full max-w-md rounded-lg border shadow-lg p-6">
-        <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
+      <Card className="w-full max-w-md rounded-lg border shadow-lg p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold">Edit Profile</h2>
+          <Button variant="ghost" size="sm" onClick={onClose}>✕</Button>
+        </div>
         
-        <form onSubmit={handleSubmit}>
-          <div className="flex justify-center mb-6 relative">
-            <Avatar className="h-24 w-24">
-              <AvatarImage src={avatarUrl} alt={username} />
-              <AvatarFallback>{username.substring(0, 2).toUpperCase()}</AvatarFallback>
-            </Avatar>
-            <button 
-              type="button"
-              className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-foreground text-background rounded-full text-xs flex items-center space-x-1"
-              onClick={() => {
-                // In a real app, open file picker
-                toast({
-                  title: "Change Avatar",
-                  description: "Avatar upload functionality would be implemented here"
-                });
-              }}
-            >
-              <Camera size={12} />
-              <span>Change</span>
-            </button>
-          </div>
-          
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Username</label>
-              <input 
-                type="text" 
-                className="w-full px-3 py-2 border rounded-md bg-background"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="flex justify-center mb-6 relative">
+              <Avatar className="h-24 w-24">
+                <AvatarImage src={avatarPreview} alt={form.getValues().username} />
+                <AvatarFallback>{form.getValues().username.substring(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <Button 
+                type="button"
+                variant="outline"
+                size="sm"
+                className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full h-8 flex items-center space-x-1"
+                onClick={handleAvatarChange}
+              >
+                <Upload size={12} />
+                <span>Change</span>
+              </Button>
+            </div>
+            
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Your username" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Your email" type="email" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="bio"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Bio</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        {...field} 
+                        placeholder="Tell us about yourself"
+                        className="resize-none min-h-[100px]"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
             
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Bio</label>
-              <textarea 
-                className="w-full px-3 py-2 border rounded-md min-h-[100px] bg-background resize-none"
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-              />
+            <div className="flex justify-end space-x-3 pt-4">
+              <Button variant="outline" onClick={onClose} type="button">Cancel</Button>
+              <Button type="submit">Save Changes</Button>
             </div>
-          </div>
-          
-          <div className="flex justify-end space-x-3 mt-6">
-            <Button variant="outline" onClick={onClose} type="button">Cancel</Button>
-            <Button type="submit">Save Changes</Button>
-          </div>
-        </form>
-      </div>
+          </form>
+        </Form>
+      </Card>
     </div>
   );
 };
