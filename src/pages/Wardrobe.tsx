@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import WardrobeGrid from '@/components/ui/WardrobeGrid';
 import { cn } from '@/lib/utils';
 import ImageCapture from '@/components/ui/ImageCapture';
+import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 // Sample data - in a real app, this would come from an API
 const SAMPLE_WARDROBE_ITEMS = [
@@ -68,6 +70,7 @@ const SAMPLE_OUTFITS = [
 const Wardrobe: React.FC = () => {
   const [activeTab, setActiveTab] = useState('items');
   const [userItems, setUserItems] = useState<any[]>(SAMPLE_WARDROBE_ITEMS);
+  const [isImageCaptureOpen, setIsImageCaptureOpen] = useState(false);
   
   const handleItemClick = (item: any) => {
     console.log('Item clicked:', item);
@@ -87,6 +90,11 @@ const Wardrobe: React.FC = () => {
     
     // Add to user items
     setUserItems(prev => [newItem, ...prev]);
+    setIsImageCaptureOpen(false);
+  };
+  
+  const handleAddNewItem = () => {
+    setIsImageCaptureOpen(true);
   };
   
   return (
@@ -94,8 +102,6 @@ const Wardrobe: React.FC = () => {
       <section className="space-y-4">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-semibold">Your Wardrobe</h1>
-          
-          <ImageCapture onImageCapture={handleImageCapture} />
         </div>
         
         <div className="flex border-b border-border">
@@ -139,6 +145,7 @@ const Wardrobe: React.FC = () => {
         <WardrobeGrid 
           items={userItems}
           onItemClick={handleItemClick}
+          onAddNewItem={handleAddNewItem}
         />
       )}
       
@@ -148,6 +155,7 @@ const Wardrobe: React.FC = () => {
             items={SAMPLE_OUTFITS}
             title="Your Outfits"
             onItemClick={handleItemClick}
+            onAddNewItem={handleAddNewItem}
           />
           
           <div className="flex justify-center mt-8">
@@ -164,24 +172,28 @@ const Wardrobe: React.FC = () => {
             items={userItems.filter(item => item.category === 'Tops')}
             title="Tops"
             onItemClick={handleItemClick}
+            onAddNewItem={handleAddNewItem}
           />
           
           <WardrobeGrid 
             items={userItems.filter(item => item.category === 'Bottoms')}
             title="Bottoms"
             onItemClick={handleItemClick}
+            onAddNewItem={handleAddNewItem}
           />
           
           <WardrobeGrid 
             items={userItems.filter(item => item.category === 'Shoes')}
             title="Shoes"
             onItemClick={handleItemClick}
+            onAddNewItem={handleAddNewItem}
           />
           
           <WardrobeGrid 
             items={userItems.filter(item => item.category === 'Accessories')}
             title="Accessories"
             onItemClick={handleItemClick}
+            onAddNewItem={handleAddNewItem}
           />
           
           <WardrobeGrid 
@@ -190,9 +202,19 @@ const Wardrobe: React.FC = () => {
             )}
             title="Uncategorized"
             onItemClick={handleItemClick}
+            onAddNewItem={handleAddNewItem}
           />
         </div>
       )}
+      
+      {/* Image Capture Dialog */}
+      <Drawer open={isImageCaptureOpen} onOpenChange={setIsImageCaptureOpen}>
+        <DrawerContent>
+          <div className="p-4 max-w-md mx-auto">
+            <ImageCapture onImageCapture={handleImageCapture} />
+          </div>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 };

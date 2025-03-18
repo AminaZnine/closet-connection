@@ -14,6 +14,7 @@ interface WardrobeGridProps {
   title?: string;
   className?: string;
   onItemClick?: (item: ClothingItem) => void;
+  onAddNewItem?: () => void;
 }
 
 const WardrobeGrid: React.FC<WardrobeGridProps> = ({
@@ -21,6 +22,7 @@ const WardrobeGrid: React.FC<WardrobeGridProps> = ({
   title,
   className,
   onItemClick,
+  onAddNewItem,
 }) => {
   return (
     <div className={cn("space-y-4", className)}>
@@ -48,7 +50,10 @@ const WardrobeGrid: React.FC<WardrobeGridProps> = ({
           </div>
         ))}
         
-        <div className="border border-dashed border-border aspect-square rounded-md flex flex-col items-center justify-center p-4 cursor-pointer hover:bg-muted/50 transition-colors duration-300">
+        <div 
+          className="border border-dashed border-border aspect-square rounded-md flex flex-col items-center justify-center p-4 cursor-pointer hover:bg-muted/50 transition-colors duration-300"
+          onClick={onAddNewItem}
+        >
           <div className="w-8 h-8 rounded-full flex items-center justify-center border border-muted-foreground mb-2">
             <span className="text-xl leading-none">+</span>
           </div>
