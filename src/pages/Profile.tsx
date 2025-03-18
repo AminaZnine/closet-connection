@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import ProfileHeader from '@/components/ui/ProfileHeader';
 import StyleCard from '@/components/ui/StyleCard';
@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Camera, Settings, BookMarked, Heart, ShoppingBag, LogOut, Upload, UserPen } from 'lucide-react';
+import { Camera, Settings, BookMarked, Heart, ShoppingBag, LogOut, Upload, UserPen, ImagePlus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -26,7 +26,7 @@ const profileFormSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
   bio: z.string().optional(),
-  avatarUrl: z.string().url({ message: "Please enter a valid URL" }).optional(),
+  avatarUrl: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -347,18 +347,41 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({ user, onClose, onSa
   });
   
   const [avatarPreview, setAvatarPreview] = useState(user.avatarUrl);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
-  const handleAvatarChange = () => {
-    const mockAvatars = [
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80'
-    ];
-    
-    const randomAvatar = mockAvatars[Math.floor(Math.random() * mockAvatars.length)];
-    setAvatarPreview(randomAvatar);
-    form.setValue('avatarUrl', randomAvatar);
+  const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Check file type
+      if (!file.type.match('image.*')) {
+        toast({
+          title: "Invalid file type",
+          description: "Please upload an image file"
+        });
+        return;
+      }
+      
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Maximum file size is 5MB"
+        });
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setAvatarPreview(result);
+        form.setValue('avatarUrl', result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
   };
   
   const onSubmit = (data: ProfileFormValues) => {
@@ -367,7 +390,7 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({ user, onClose, onSa
   
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md rounded-lg border shadow-lg p-6">
+      <Card className="w-full max-w-md rounded-lg border shadow-lg p-6 animate-fade-in">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold">Edit Profile</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>✕</Button>
@@ -376,19 +399,36 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({ user, onClose, onSa
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="flex justify-center mb-6 relative">
-              <Avatar className="h-24 w-24">
-                <AvatarImage src={avatarPreview} alt={form.getValues().username} />
-                <AvatarFallback>{form.getValues().username.substring(0, 2).toUpperCase()}</AvatarFallback>
-              </Avatar>
+              <div className="relative group">
+                <Avatar className="h-28 w-28 border-2 border-primary">
+                  <AvatarImage src={avatarPreview} alt={form.getValues().username} className="object-cover" />
+                  <AvatarFallback>{form.getValues().username.substring(0, 2).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <div 
+                  className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                  onClick={triggerFileInput}
+                >
+                  <ImagePlus className="text-white h-8 w-8" />
+                </div>
+              </div>
+              <input 
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+              />
+            </div>
+            <div className="text-center -mt-4 mb-4">
               <Button 
                 type="button"
                 variant="outline"
                 size="sm"
-                className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full h-8 flex items-center space-x-1"
-                onClick={handleAvatarChange}
+                className="text-xs"
+                onClick={triggerFileInput}
               >
-                <Upload size={12} />
-                <span>Change</span>
+                <Upload size={12} className="mr-1" />
+                Upload Photo
               </Button>
             </div>
             
