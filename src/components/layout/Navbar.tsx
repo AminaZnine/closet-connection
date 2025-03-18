@@ -18,12 +18,9 @@ export const Navbar: React.FC = () => {
         <div className="flex items-center justify-between py-4 px-4">
           <Link
             to="/"
-            className="flex items-center"
+            className="text-2xl font-semibold tracking-tighter"
           >
-            <div className="flex flex-col items-center">
-              <span className="text-lg font-light tracking-tight lowercase">unik concept</span>
-              <span className="text-xs tracking-widest uppercase mt-[-2px]">NYC</span>
-            </div>
+            Unik concept
           </Link>
           
           <nav className="hidden md:flex items-center space-x-8">
