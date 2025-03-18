@@ -1,6 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import OutfitCreator from '@/components/ui/OutfitCreator';
+import ImageCapture from '@/components/ui/ImageCapture';
 
 // Sample data - in a real app, this would come from an API
 const SAMPLE_WARDROBE_ITEMS = [
@@ -49,9 +50,29 @@ const SAMPLE_WARDROBE_ITEMS = [
 ];
 
 const Create: React.FC = () => {
+  const [wardrobeItems, setWardrobeItems] = useState(SAMPLE_WARDROBE_ITEMS);
+  
+  const handleImageCapture = (file: File) => {
+    console.log('Image captured:', file);
+    
+    // Create a new wardrobe item with the captured image
+    const newItem = {
+      id: `user-${Date.now()}`,
+      imageUrl: URL.createObjectURL(file),
+      category: 'Uncategorized', // Default category
+      name: 'New Item' // Default name
+    };
+    
+    // Add to user items
+    setWardrobeItems(prev => [newItem, ...prev]);
+  };
+  
   return (
     <div className="pb-8">
-      <OutfitCreator wardrobeItems={SAMPLE_WARDROBE_ITEMS} />
+      <div className="flex justify-end mb-4">
+        <ImageCapture onImageCapture={handleImageCapture} />
+      </div>
+      <OutfitCreator wardrobeItems={wardrobeItems} />
     </div>
   );
 };

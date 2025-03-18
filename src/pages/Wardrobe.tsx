@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import WardrobeGrid from '@/components/ui/WardrobeGrid';
 import { cn } from '@/lib/utils';
+import ImageCapture from '@/components/ui/ImageCapture';
 
 // Sample data - in a real app, this would come from an API
 const SAMPLE_WARDROBE_ITEMS = [
@@ -66,16 +67,36 @@ const SAMPLE_OUTFITS = [
 
 const Wardrobe: React.FC = () => {
   const [activeTab, setActiveTab] = useState('items');
+  const [userItems, setUserItems] = useState<any[]>(SAMPLE_WARDROBE_ITEMS);
   
   const handleItemClick = (item: any) => {
     console.log('Item clicked:', item);
     // In a real app, open item detail modal
   };
   
+  const handleImageCapture = (file: File) => {
+    console.log('Image captured:', file);
+    
+    // Create a new wardrobe item with the captured image
+    const newItem = {
+      id: `user-${Date.now()}`,
+      imageUrl: URL.createObjectURL(file),
+      category: 'Uncategorized', // Default category
+      name: 'New Item' // Default name
+    };
+    
+    // Add to user items
+    setUserItems(prev => [newItem, ...prev]);
+  };
+  
   return (
     <div className="space-y-8 pb-8">
       <section className="space-y-4">
-        <h1 className="text-2xl font-semibold">Your Wardrobe</h1>
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-semibold">Your Wardrobe</h1>
+          
+          <ImageCapture onImageCapture={handleImageCapture} />
+        </div>
         
         <div className="flex border-b border-border">
           <button
@@ -116,7 +137,7 @@ const Wardrobe: React.FC = () => {
       
       {activeTab === 'items' && (
         <WardrobeGrid 
-          items={SAMPLE_WARDROBE_ITEMS}
+          items={userItems}
           onItemClick={handleItemClick}
         />
       )}
@@ -140,26 +161,34 @@ const Wardrobe: React.FC = () => {
       {activeTab === 'categories' && (
         <div className="space-y-8">
           <WardrobeGrid 
-            items={SAMPLE_WARDROBE_ITEMS.filter(item => item.category === 'Tops')}
+            items={userItems.filter(item => item.category === 'Tops')}
             title="Tops"
             onItemClick={handleItemClick}
           />
           
           <WardrobeGrid 
-            items={SAMPLE_WARDROBE_ITEMS.filter(item => item.category === 'Bottoms')}
+            items={userItems.filter(item => item.category === 'Bottoms')}
             title="Bottoms"
             onItemClick={handleItemClick}
           />
           
           <WardrobeGrid 
-            items={SAMPLE_WARDROBE_ITEMS.filter(item => item.category === 'Shoes')}
+            items={userItems.filter(item => item.category === 'Shoes')}
             title="Shoes"
             onItemClick={handleItemClick}
           />
           
           <WardrobeGrid 
-            items={SAMPLE_WARDROBE_ITEMS.filter(item => item.category === 'Accessories')}
+            items={userItems.filter(item => item.category === 'Accessories')}
             title="Accessories"
+            onItemClick={handleItemClick}
+          />
+          
+          <WardrobeGrid 
+            items={userItems.filter(item => 
+              !['Tops', 'Bottoms', 'Shoes', 'Accessories'].includes(item.category)
+            )}
+            title="Uncategorized"
             onItemClick={handleItemClick}
           />
         </div>
